@@ -40,6 +40,12 @@ export default function Login() {
       withCredentials: true,
     });
 
+    if (response.data.ok) {
+      console.log('Login successfull.');
+    } else {
+      console.log('Login failed.');
+    }
+
     setLoading(false);
   };
 
