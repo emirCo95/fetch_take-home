@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import axios from 'axios';
 
 //base_url
 const base_url = 'https://frontend-take-home-service.fetch.com';
@@ -17,7 +18,7 @@ export default function Login() {
     email: '',
   });
 
-  //   const router = useRouter();
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -28,13 +29,22 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
 
-    console.log(formData);
+    //login api call
+    const response = await axios({
+      method: 'post',
+      url: `${base_url}/auth/login`,
+      data: {
+        name: formData.name,
+        email: formData.email,
+      },
+      withCredentials: true,
+    });
 
     setLoading(false);
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto mt-10 p-6 shadow-lg">
+    <Card className="w-full max-w-md mx-auto mt-10 p-6 shadow-lg dark:bg-gray-500">
       <CardHeader>
         <CardTitle>Login to Your Account</CardTitle>
       </CardHeader>
