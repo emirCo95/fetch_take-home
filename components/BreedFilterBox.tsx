@@ -19,11 +19,11 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-interface BreedsProp {
+interface BreedFilterBoxProps {
   breeds: string[];
 }
 
-export function BreedFilterBox({ breeds }: BreedsProp) {
+export function BreedFilterBox({ breeds }: BreedFilterBoxProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
 

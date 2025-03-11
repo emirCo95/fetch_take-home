@@ -25,7 +25,9 @@ export default function Navbar() {
 
     router.push('/');
 
-    window.location.reload();
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
   };
 
   return (
