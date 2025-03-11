@@ -5,6 +5,14 @@ import { BreedFilterBox } from '@/components/BreedFilterBox';
 import axios from 'axios';
 import DogCard from '@/components/DogCard';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 //base_url
 const base_url = 'https://frontend-take-home-service.fetch.com';
@@ -36,6 +44,7 @@ export default function SearchDogs() {
   });
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [paginationState, setPaginationState] = useState<boolean>(false);
+  const [sortingOrder, setSortingOrder] = useState<string>('asc');
 
   const fetchDogData = async () => {
     const response = await axios(`${base_url}/dogs/search`, {
@@ -43,7 +52,7 @@ export default function SearchDogs() {
       params: {
         breeds: selectedBreed,
         size: 6,
-        sort: 'name:asc',
+        sort: `name:${sortingOrder}`,
       },
       withCredentials: true,
     });
@@ -120,7 +129,7 @@ export default function SearchDogs() {
     };
 
     getDogs();
-  }, [selectedBreed]);
+  }, [selectedBreed, sortingOrder]);
 
   useEffect(() => {
     const fetchNextDogs = async () => {
@@ -169,6 +178,20 @@ export default function SearchDogs() {
     <div className="flex flex-col justify-center items-center space-x-8 dark:bg-gray-400">
       <div className="flex space-x-4 mt-10">
         <BreedFilterBox breeds={breeds} onFilterByBreed={handleFilterByBreed} />
+        <DropdownMenu>
+          <DropdownMenuTrigger>Sort</DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Alphabetically</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => setSortingOrder('asc')}>
+              A-Z
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => setSortingOrder('desc')}>
+              Z-A
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <Button
           onClick={getPrevPage}
           variant="outline"
