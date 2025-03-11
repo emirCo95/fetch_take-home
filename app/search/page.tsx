@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 //imports
@@ -272,11 +273,12 @@ export default function SearchDogs() {
         >
           Next Page
         </Button>
-        {/* <Button onClick={generateMatch} variant="outline">
-          Generate Match
-        </Button> */}
         <Dialog>
-          <DialogTrigger onClick={generateMatch}>Generate Match</DialogTrigger>
+          {favorites.length > 0 && (
+            <DialogTrigger onClick={generateMatch}>
+              Generate Match
+            </DialogTrigger>
+          )}
           <DialogContent>
             <DialogHeader>
               <DialogTitle>We found your new best friend!</DialogTitle>

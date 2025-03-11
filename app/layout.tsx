@@ -4,6 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import Navbar from '@/components/Navbar';
 
+//default fonts
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -14,6 +15,7 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+//metadata for SEO
 export const metadata: Metadata = {
   title: 'Dogster',
   description: 'Find your next best friend.',
