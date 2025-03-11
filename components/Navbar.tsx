@@ -43,6 +43,13 @@ export default function Navbar() {
                 <Button variant="ghost">Home</Button>
               </Link>
             </li>
+            {isAuthenticated && (
+              <li>
+                <Link href="/search">
+                  <Button variant="ghost">Search</Button>
+                </Link>
+              </li>
+            )}
             <li>
               <Link href="/">
                 <Button variant="ghost">About</Button>
