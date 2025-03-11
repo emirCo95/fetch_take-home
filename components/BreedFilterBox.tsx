@@ -21,11 +21,19 @@ import {
 
 interface BreedFilterBoxProps {
   breeds: string[];
+  onFilterByBreed: (value: string) => void;
 }
 
-export function BreedFilterBox({ breeds }: BreedFilterBoxProps) {
+export function BreedFilterBox({
+  breeds,
+  onFilterByBreed,
+}: BreedFilterBoxProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
+
+  const handleFilterByBreed = (currentBreed: string) => {
+    onFilterByBreed(currentBreed);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -52,6 +60,7 @@ export function BreedFilterBox({ breeds }: BreedFilterBoxProps) {
                   value={breed}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? '' : currentValue);
+                    handleFilterByBreed(currentValue);
                     setOpen(false);
                   }}
                 >
