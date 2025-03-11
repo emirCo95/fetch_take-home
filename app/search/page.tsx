@@ -7,10 +7,20 @@ import axios from 'axios';
 //base_url
 const base_url = 'https://frontend-take-home-service.fetch.com';
 
+interface SearchResults {
+  next: string;
+  resultIds: string[];
+  total: number;
+}
+
 export default function SearchDogs() {
   const [breeds, setBreeds] = useState<string[]>([]);
   const [selectedBreed, setSelectedBreed] = useState('');
-  const [searchResults, setSearchResults] = useState({});
+  const [searchResults, setSearchResults] = useState<SearchResults>({
+    next: '',
+    resultIds: [],
+    total: 0,
+  });
 
   useEffect(() => {
     fetchBreeds();
@@ -30,10 +40,42 @@ export default function SearchDogs() {
       if (response.data) {
         setSearchResults(response.data);
       }
+
+      return searchResults.resultIds;
     };
-    fetchDogData();
-    console.log(searchResults);
+
+    const fetchDogs = async ({ dogIds }: { dogIds: string[] }) => {
+      const response = await axios.post(`${base_url}/dogs`, dogIds, {
+        withCredentials: true,
+      });
+
+      if (response.data) {
+        console.log(response.data);
+      }
+    };
+    fetchDogData().then((result) => {
+      console.log(result);
+      fetchDogs({ dogIds: result });
+    });
   }, [selectedBreed]);
+
+  // useEffect(() => {
+  //   const fetchDogs = async () => {
+  //     const response = await axios.post(
+  //       `${base_url}/dogs`,
+  //       searchResults.resultIds,
+  //       {
+  //         withCredentials: true,
+  //       }
+  //     );
+
+  //     if (response.data) {
+  //       console.log(response.data);
+  //     }
+  //   };
+
+  //   fetchDogs();
+  // }, [selectedBreed]);
 
   const fetchBreeds = async () => {
     const response = await axios(`${base_url}/dogs/breeds`, {
