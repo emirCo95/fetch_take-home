@@ -45,6 +45,9 @@ export default function SearchDogs() {
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [paginationState, setPaginationState] = useState<boolean>(false);
   const [sortingOrder, setSortingOrder] = useState<string>('asc');
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [matchId, setMatchId] = useState<string>('');
+  const [match, setMatch] = useState<string>('');
 
   const fetchDogData = async () => {
     const response = await axios(`${base_url}/dogs/search`, {
@@ -81,6 +84,10 @@ export default function SearchDogs() {
     setSelectedBreed(breed);
   };
 
+  const handleSetFavorites = async (favorite: string) => {
+    setFavorites((prevValues) => [...prevValues, favorite]);
+  };
+
   const getNextPage = async () => {
     if (searchResults.next) {
       const queryData = await axios(`${base_url}${searchResults.next}`, {
@@ -106,6 +113,17 @@ export default function SearchDogs() {
       setPaginationState(false);
     } else {
       return;
+    }
+  };
+
+  const generateMatch = async () => {
+    if (favorites.length > 0) {
+      const result = await axios.post(`${base_url}/dogs/match`, favorites, {
+        withCredentials: true,
+      });
+      setMatchId(result.data);
+    } else {
+      alert('You have not added any dogs to your favorites!');
     }
   };
 
@@ -174,6 +192,33 @@ export default function SearchDogs() {
     }
   }, [searchResults]);
 
+  useEffect(() => {
+    const getMatchById = async () => {
+      try {
+        if (matchId) {
+          const matchedDog = await axios.post(
+            `${base_url}/dogs`,
+            [matchId.match],
+            {
+              withCredentials: true,
+            }
+          );
+          setMatch(matchedDog.data);
+        } else {
+          return;
+        }
+      } catch (error) {
+        console.error('Error generating a match:', error);
+      }
+    };
+
+    getMatchById();
+  }, [matchId]);
+
+  useEffect(() => {
+    console.log(match);
+  }, [match]);
+
   return (
     <div className="flex flex-col justify-center items-center space-x-8 dark:bg-gray-400">
       <div className="flex space-x-4 mt-10">
@@ -206,9 +251,19 @@ export default function SearchDogs() {
         >
           Next Page
         </Button>
+        <Button onClick={generateMatch} variant="outline">
+          Generate Match
+        </Button>
       </div>
-      <main className="flex flex-wrap gap-6 p-6 justify-center">
-        {dogs && dogs.map((dog) => <DogCard key={dog.id} dog={dog} />)}
+      <main className="flex flex-wrap gap-6 p-6 justify-center dark:bg-gray-400">
+        {dogs &&
+          dogs.map((dog) => (
+            <DogCard
+              onSetFavorites={handleSetFavorites}
+              key={dog.id}
+              dog={dog}
+            />
+          ))}
       </main>
     </div>
   );
