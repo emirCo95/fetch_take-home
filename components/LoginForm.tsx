@@ -30,9 +30,8 @@ export default function Login() {
     setLoading(true);
 
     //login api call
-    const response = await axios({
-      method: 'post',
-      url: `${base_url}/auth/login`,
+    await axios(`${base_url}/auth/login`, {
+      method: 'POST',
       data: {
         name: formData.name,
         email: formData.email,
@@ -40,13 +39,9 @@ export default function Login() {
       withCredentials: true,
     });
 
-    if (response.data.ok) {
-      console.log('Login successfull.');
-    } else {
-      console.log('Login failed.');
-    }
-
     setLoading(false);
+
+    router.push('/');
   };
 
   return (

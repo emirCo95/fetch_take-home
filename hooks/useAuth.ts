@@ -1,5 +1,8 @@
-import axios from 'axios';
+'use client';
 import { useEffect, useState } from 'react';
+
+//base_url
+const base_url = 'https://frontend-take-home-service.fetch.com';
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -7,12 +10,12 @@ export function useAuth() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await axios({
-          method: 'get',
-          url: '/api/auth/user',
-          withCredentials: true,
+        // Attempt to fetch a protected resource
+        const res = await fetch(`${base_url}/dogs/breeds`, {
+          credentials: 'include',
         });
-        setIsAuthenticated(res.data.ok);
+
+        setIsAuthenticated(res.ok); // If request succeeds (200 OK), user is authenticated
       } catch {
         setIsAuthenticated(false);
       }
