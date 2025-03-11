@@ -41,7 +41,7 @@ export default function Login() {
 
     setLoading(false);
 
-    router.push('/');
+    router.push('/search');
 
     setTimeout(() => {
       window.location.reload();

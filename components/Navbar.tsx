@@ -23,6 +23,8 @@ export default function Navbar() {
       withCredentials: true,
     });
 
+    router.push('/');
+
     window.location.reload();
   };
 
