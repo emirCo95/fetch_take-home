@@ -31,7 +31,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed w-full bg-[#fefdf8] dark:bg-gray-300 shadow-md p-4">
+    <nav className="w-full bg-[#fefdf8] dark:bg-gray-300 shadow-md p-4">
       <div className="flex justify-evenly items-center">
         <div className="">
           <Image src={logo} alt="logo" width={50} height={50} />

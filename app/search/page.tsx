@@ -8,12 +8,6 @@ import DogCard from '@/components/DogCard';
 //base_url
 const base_url = 'https://frontend-take-home-service.fetch.com';
 
-interface SearchResults {
-  next: string;
-  resultIds: string[];
-  total: number;
-}
-
 interface Dog {
   id: string;
   img: string;
@@ -26,11 +20,6 @@ interface Dog {
 export default function SearchDogs() {
   const [breeds, setBreeds] = useState<string[]>([]);
   const [selectedBreed, setSelectedBreed] = useState<string>('');
-  const [searchResults, setSearchResults] = useState<SearchResults>({
-    next: '',
-    resultIds: [],
-    total: 0,
-  });
   const [dogs, setDogs] = useState<Dog[]>([]);
 
   const fetchDogData = async () => {
@@ -43,20 +32,14 @@ export default function SearchDogs() {
       withCredentials: true,
     });
 
-    if (response.data) {
-      setSearchResults(response.data);
-    }
-
-    return searchResults.resultIds;
+    return response.data.resultIds;
   };
 
   const fetchDogs = async ({ dogIds }: { dogIds: string[] }) => {
     const response = await axios.post(`${base_url}/dogs`, dogIds, {
       withCredentials: true,
     });
-    if (response.data) {
-      setDogs(response.data);
-    }
+    return response.data;
   };
   const fetchBreeds = async () => {
     const response = await axios(`${base_url}/dogs/breeds`, {
@@ -78,14 +61,28 @@ export default function SearchDogs() {
   }, []);
 
   useEffect(() => {
-    fetchDogData().then((result) => {
-      fetchDogs({ dogIds: result });
-    });
+    const getDogs = async () => {
+      try {
+        const result = await fetchDogData(); // Fetch dog IDs first
+        const data = await fetchDogs({ dogIds: result }); // Fetch dog details
+
+        if (data) {
+          setDogs(data);
+        }
+      } catch (error) {
+        console.error('Error fetching dogs:', error);
+      }
+    };
+
+    getDogs();
+    console.log(dogs);
   }, [selectedBreed]);
 
   return (
-    <div className="h-screen flex justify-center items-start space-x-8 pt-24 dark:bg-gray-400">
-      <BreedFilterBox breeds={breeds} onFilterByBreed={handleFilterByBreed} />
+    <div className="flex flex-col justify-center items-center space-x-8 dark:bg-gray-400">
+      <div className="mt-10">
+        <BreedFilterBox breeds={breeds} onFilterByBreed={handleFilterByBreed} />
+      </div>
       <main className="flex flex-wrap gap-6 p-6 justify-center">
         {dogs.map((dog) => (
           <DogCard key={dog.id} dog={dog} />
