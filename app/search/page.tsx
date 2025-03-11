@@ -26,7 +26,7 @@ export default function SearchDogs() {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="h-screen flex justify-evenly items-start pt-24">
       <BreedFilterBox breeds={breeds} />
     </div>
   );
