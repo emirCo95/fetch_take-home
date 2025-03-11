@@ -42,6 +42,10 @@ export default function Login() {
     setLoading(false);
 
     router.push('/');
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
   };
 
   return (

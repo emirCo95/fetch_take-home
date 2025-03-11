@@ -22,6 +22,8 @@ export default function Navbar() {
       method: 'post',
       withCredentials: true,
     });
+
+    window.location.reload();
   };
 
   return (
@@ -50,7 +52,8 @@ export default function Navbar() {
           </ul>
         </div>
         {isAuthenticated ? (
-          <div className="">
+          <div className="flex items-center space-x-2">
+            <ModeToggle />
             <Button onClick={handleLogout} variant="outline">
               Logout
             </Button>
