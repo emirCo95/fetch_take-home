@@ -13,6 +13,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import Image from 'next/image';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 //base_url
 const base_url = 'https://frontend-take-home-service.fetch.com';
@@ -47,7 +57,7 @@ export default function SearchDogs() {
   const [sortingOrder, setSortingOrder] = useState<string>('asc');
   const [favorites, setFavorites] = useState<string[]>([]);
   const [matchId, setMatchId] = useState<string>('');
-  const [match, setMatch] = useState<string>('');
+  const [match, setMatch] = useState<Dog[]>([]);
 
   const fetchDogData = async () => {
     const response = await axios(`${base_url}/dogs/search`, {
@@ -215,10 +225,6 @@ export default function SearchDogs() {
     getMatchById();
   }, [matchId]);
 
-  useEffect(() => {
-    console.log(match);
-  }, [match]);
-
   return (
     <div className="flex flex-col justify-center items-center space-x-8 dark:bg-gray-400">
       <div className="flex space-x-4 mt-10">
@@ -251,9 +257,44 @@ export default function SearchDogs() {
         >
           Next Page
         </Button>
-        <Button onClick={generateMatch} variant="outline">
+        {/* <Button onClick={generateMatch} variant="outline">
           Generate Match
-        </Button>
+        </Button> */}
+        <Dialog>
+          <DialogTrigger onClick={generateMatch}>Generate Match</DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>We found your new best friend!</DialogTitle>
+              <DialogDescription>
+                <Card className="w-full max-w-sm rounded-xl shadow-md">
+                  <CardHeader className="p-4">
+                    <Image
+                      src={match[0]?.img || '/default-image.jpg'}
+                      alt={match[0]?.name || 'dog image'}
+                      width={300}
+                      height={200}
+                      className="rounded-md object-cover w-full h-48"
+                    />
+                    <CardTitle className="text-xl font-bold mt-2">
+                      {match[0]?.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4 space-y-2">
+                    <p className="dark:text-white">
+                      <strong>Breed:</strong> {match[0]?.breed}
+                    </p>
+                    <p className="dark:text-white">
+                      <strong>Age:</strong> {match[0]?.age} years
+                    </p>
+                    <p className="dark:text-white">
+                      <strong>Zip Code:</strong> {match[0]?.zip_code}
+                    </p>
+                  </CardContent>
+                </Card>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
       <main className="flex flex-wrap gap-6 p-6 justify-center dark:bg-gray-400">
         {dogs &&
@@ -262,6 +303,7 @@ export default function SearchDogs() {
               onSetFavorites={handleSetFavorites}
               key={dog.id}
               dog={dog}
+              favorites={favorites}
             />
           ))}
       </main>

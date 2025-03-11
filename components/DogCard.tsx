@@ -14,9 +14,11 @@ type Dog = {
 export default function DogCard({
   dog,
   onSetFavorites,
+  favorites,
 }: {
   dog: Dog;
   onSetFavorites: (value: string) => void;
+  favorites: string[];
 }) {
   const handleSetFavorites = (dogId: string) => {
     onSetFavorites(dogId);
@@ -45,7 +47,11 @@ export default function DogCard({
         </p>
         <p className="dark:text-white">
           <Button onClick={() => handleSetFavorites(dog.id)} variant="outline">
-            Add To Favorites
+            {favorites.includes(dog.id) ? (
+              <p>Added to favorites</p>
+            ) : (
+              <p>Add to favorites</p>
+            )}
           </Button>
         </p>
       </CardContent>
