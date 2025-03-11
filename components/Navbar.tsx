@@ -1,5 +1,6 @@
 'use client';
 
+//imports
 import logo from '@/assets/logo.png';
 import Image from 'next/image';
 import { Button } from './ui/button';
@@ -13,16 +14,20 @@ import axios from 'axios';
 const base_url = 'https://frontend-take-home-service.fetch.com';
 
 export default function Navbar() {
+  //useAuth() hook check if the user is authenticated
   const { isAuthenticated } = useAuth();
 
+  //userRouter hook call
   const router = useRouter();
 
+  //logout handler
   const handleLogout = async () => {
     await axios(`${base_url}/auth/logout`, {
       method: 'post',
       withCredentials: true,
     });
 
+    //redirect user to home page after logging out
     router.push('/');
 
     setTimeout(() => {

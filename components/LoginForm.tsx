@@ -1,5 +1,6 @@
 'use client';
 
+//imports
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
@@ -12,19 +13,23 @@ import axios from 'axios';
 const base_url = 'https://frontend-take-home-service.fetch.com';
 
 export default function Login() {
+  //states
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
   });
 
+  //router hook call
   const router = useRouter();
 
+  //form data change handler
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  //submission of the form handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -41,6 +46,7 @@ export default function Login() {
 
     setLoading(false);
 
+    //redirect user to /search page after login
     router.push('/search');
 
     setTimeout(() => {

@@ -1,5 +1,6 @@
 'use client';
 
+//imports
 import { useState, useEffect } from 'react';
 import { BreedFilterBox } from '@/components/BreedFilterBox';
 import axios from 'axios';
@@ -16,17 +17,17 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import logo from '@/assets/logo.png';
 
 //base_url
 const base_url = 'https://frontend-take-home-service.fetch.com';
 
+//TS interfaces
 interface Dog {
   id: string;
   img: string;
@@ -44,6 +45,7 @@ interface SearchResults {
 }
 
 export default function SearchDogs() {
+  //states
   const [breeds, setBreeds] = useState<string[]>([]);
   const [selectedBreed, setSelectedBreed] = useState<string>('');
   const [searchResults, setSearchResults] = useState<SearchResults>({
@@ -59,6 +61,7 @@ export default function SearchDogs() {
   const [matchId, setMatchId] = useState<string>('');
   const [match, setMatch] = useState<Dog[]>([]);
 
+  //function that fetches dog data such as resultIds
   const fetchDogData = async () => {
     const response = await axios(`${base_url}/dogs/search`, {
       method: 'GET',
@@ -73,12 +76,15 @@ export default function SearchDogs() {
     return response.data;
   };
 
+  //function that fetches dog objects based on resultIds
   const fetchDogs = async ({ dogIds }: { dogIds: string[] }) => {
     const response = await axios.post(`${base_url}/dogs`, dogIds, {
       withCredentials: true,
     });
     return response.data;
   };
+
+  //function that fetches dog breeds
   const fetchBreeds = async () => {
     const response = await axios(`${base_url}/dogs/breeds`, {
       method: 'GET',
@@ -90,14 +96,17 @@ export default function SearchDogs() {
     }
   };
 
+  //filter by breed handler
   const handleFilterByBreed = async (breed: string) => {
     setSelectedBreed(breed);
   };
 
+  //set favorites handler
   const handleSetFavorites = async (favorite: string) => {
     setFavorites((prevValues) => [...prevValues, favorite]);
   };
 
+  //function that fetches next page of dog ids
   const getNextPage = async () => {
     if (searchResults.next) {
       const queryData = await axios(`${base_url}${searchResults.next}`, {
@@ -112,6 +121,7 @@ export default function SearchDogs() {
     }
   };
 
+  //function that fetches previous page of dog ids
   const getPrevPage = async () => {
     if (searchResults.prev) {
       const queryData = await axios(`${base_url}${searchResults.prev}`, {
@@ -126,6 +136,7 @@ export default function SearchDogs() {
     }
   };
 
+  //function that generates a matchId
   const generateMatch = async () => {
     if (favorites.length > 0) {
       const result = await axios.post(`${base_url}/dogs/match`, favorites, {
@@ -137,16 +148,18 @@ export default function SearchDogs() {
     }
   };
 
+  //fetch breeds on first render
   useEffect(() => {
     fetchBreeds();
   }, []);
 
+  //fetch dog objects whenever selected breed or sorting order changes
   useEffect(() => {
     const getDogs = async () => {
       try {
         const resultData = await fetchDogData();
         setSearchResults(resultData);
-        const data = await fetchDogs({ dogIds: resultData.resultIds }); // Fetch dog details
+        const data = await fetchDogs({ dogIds: resultData.resultIds });
 
         if (data) {
           setDogs(data);
@@ -159,6 +172,7 @@ export default function SearchDogs() {
     getDogs();
   }, [selectedBreed, sortingOrder]);
 
+  //fetch next or previous page of dog objects based on pagination state
   useEffect(() => {
     const fetchNextDogs = async () => {
       try {
@@ -202,6 +216,7 @@ export default function SearchDogs() {
     }
   }, [searchResults]);
 
+  //fetch the matched dog object based on matchId
   useEffect(() => {
     const getMatchById = async () => {
       try {
@@ -265,33 +280,27 @@ export default function SearchDogs() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>We found your new best friend!</DialogTitle>
-              <DialogDescription>
-                <Card className="w-full max-w-sm rounded-xl shadow-md">
-                  <CardHeader className="p-4">
-                    <Image
-                      src={match[0]?.img || '/default-image.jpg'}
-                      alt={match[0]?.name || 'dog image'}
-                      width={300}
-                      height={200}
-                      className="rounded-md object-cover w-full h-48"
-                    />
-                    <CardTitle className="text-xl font-bold mt-2">
-                      {match[0]?.name}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-4 space-y-2">
-                    <p className="dark:text-white">
-                      <strong>Breed:</strong> {match[0]?.breed}
-                    </p>
-                    <p className="dark:text-white">
-                      <strong>Age:</strong> {match[0]?.age} years
-                    </p>
-                    <p className="dark:text-white">
-                      <strong>Zip Code:</strong> {match[0]?.zip_code}
-                    </p>
-                  </CardContent>
-                </Card>
-              </DialogDescription>
+
+              <Image
+                src={match[0]?.img || logo}
+                alt={match[0]?.name || 'dog image'}
+                width={300}
+                height={200}
+                className="rounded-md object-cover w-full h-48"
+              />
+              <section className="flex flex-col">
+                {match[0]?.name}
+
+                <span className="dark:text-white">
+                  <strong>Breed:</strong> {match[0]?.breed}
+                </span>
+                <span className="dark:text-white">
+                  <strong>Age:</strong> {match[0]?.age} years
+                </span>
+                <span className="dark:text-white">
+                  <strong>Zip Code:</strong> {match[0]?.zip_code}
+                </span>
+              </section>
             </DialogHeader>
           </DialogContent>
         </Dialog>
